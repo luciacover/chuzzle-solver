@@ -1,6 +1,7 @@
 #include "board.hpp"
 #include <cstdio>
 #include <unordered_map>
+#include <algorithm>
 
 std::string board_to_string(const board_t &board) {
   std::string out = "";
@@ -68,4 +69,12 @@ void print_board(const board_t &board) {
 
     printf("\n");
   }
+}
+
+// !! DOESN'T DO BOUNDS CHECKS! THOSE SHOULD BE HANDLED ELSEWHERE!
+void slide_left(board_t &board, const int &row, const int &count) { 
+  const int start_index = row * BOARD_LENGTH;
+  std::rotate(board.begin() + start_index,
+              board.begin() + start_index + count,
+              board.begin() + start_index + BOARD_LENGTH);
 }
