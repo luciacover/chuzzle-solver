@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <algorithm>
 
+// converts a board to a string of chuzzles R/B/C/G/O/M/W/Y
 std::string board_to_string(const board_t &board) {
   std::string out = "";
 
@@ -13,6 +14,7 @@ std::string board_to_string(const board_t &board) {
   return out;
 }
 
+// converts a string of chuzzles R/B/C/G/O/M/W/Y to a board
 board_t string_to_board(const std::string &bs) {
   board_t board;
   int pos = 0;
@@ -71,10 +73,40 @@ void print_board(const board_t &board) {
   }
 }
 
+// calculates the 1d coordinate for the board given a 2d coord
+constexpr int board_coord(const int &row, const int &col) {
+  return row * BOARD_LENGTH + col;
+}
+
+// this definitely isnt optimal, i reckon i could probably do this inplace with std::swap,
+// but bah humbug
+board_t rotate_board(const board_t &board, const bool &left_rotate) {
+  board_t dst;
+  
+  for (int i = 0; i < BOARD_LENGTH; i++) {
+    for (int j = 0; j < BOARD_LENGTH; j++) {
+      dst[board_coord(i, j)] = board[board_coord(j, (left_rotate) ? BOARD_LENGTH - i - 1 : i)];
+    }
+  }
+
+  return dst;
+}
+
 // !! DOESN'T DO BOUNDS CHECKS! THOSE SHOULD BE HANDLED ELSEWHERE!
 void slide_left(board_t &board, const int &row, const int &count) { 
   const int start_index = row * BOARD_LENGTH;
   std::rotate(board.begin() + start_index,
               board.begin() + start_index + count,
               board.begin() + start_index + BOARD_LENGTH);
+}
+
+void slide_up(board_t &board, const int &col, const int &count) {
+  board_t board_cols = rotate_board(board, false);
+  const int start_index = col * BOARD_LENGTH;
+
+  std::rotate(board_cols.begin() + start_index,
+              board_cols.begin() + start_index + count,
+              board_cols.begin() + start_index + BOARD_LENGTH);
+
+  board = std::move(rotate_board(board_cols, true));
 }
