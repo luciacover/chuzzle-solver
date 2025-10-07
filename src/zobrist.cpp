@@ -28,39 +28,3 @@ hashsize_t hash(board_t board, table_t table) {
 
   return hash;
 }
-
-std::string board_to_string(board_t board) {
-  std::string out = "";
-
-  for (auto c : board) {
-    out += static_cast<char>(c);
-  }
-
-  return out;
-}
-
-board_t string_to_board(std::string bs) {
-  board_t board;
-  int pos = 0;
-
-  for (char c : bs) {
-    switch (c) {
-      case 'R':
-      case 'B':
-      case 'C':
-      case 'G':
-      case 'O':
-      case 'M':
-      case 'W':
-      case 'Y':
-        board[pos++] = static_cast<Chuzzle>(c);
-        break;
-      default:
-        break;
-    }
-
-    if (pos >= BOARD_SIZE) break;
-  }
-
-  return board;
-}
