@@ -64,7 +64,8 @@ void repl() {
     printf("> ");
 
     std::string in = read_input();
-    // checking single-character commands
+
+    // checking for commands that don't require extra input
     if (in == "q") {
       printf("goodbye, friend :(");
       break;
@@ -113,6 +114,7 @@ void repl() {
       printf("q                - quits the program... but you wouldn't do that right? :>\n");
     }
 
+    // handling commands that need regex patterns
     std::regex board_pattern(R"(b ([RBCGOMWY]{36}))");
     std::regex left_pattern(R"(l([012345])([012345]))");
     std::regex down_pattern(R"(d([012345])([012345]))");
