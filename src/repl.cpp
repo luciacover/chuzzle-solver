@@ -105,8 +105,8 @@ void repl() {
       printf("b <board string> - creates a new board with a given board string.\n");
       printf("r                - sets the board to be a randomly generated one.\n");
       printf("p                - prints the board\n");
-      printf("l<row>+<count>   - moves the row to the left by count. row and count are between 0 - 5 inclusive.\n");
-      printf("d<col>+<count>   - similar to moving left, but down instead.\n");
+      printf("l<row><count>    - moves the row to the left by count. row and count are between 0 - 5 inclusive.\n");
+      printf("d<col><count>    - similar to moving left, but down instead.\n");
       printf("t                - recreates the hashing table.\n");
       printf("h                - hashes the board\n");
       printf(",h               - this help message :D!!!\n");
@@ -114,8 +114,8 @@ void repl() {
     }
 
     std::regex board_pattern(R"(b ([RBCGOMWY]{36}))");
-    std::regex left_pattern(R"(l([012345])\+([012345]))");
-    std::regex down_pattern(R"(d([012345])\+([012345]))");
+    std::regex left_pattern(R"(l([012345])([012345]))");
+    std::regex down_pattern(R"(d([012345])([012345]))");
     std::smatch matches;
     if (std::regex_match(in, matches, board_pattern)) {
       std::string b = matches[1];
