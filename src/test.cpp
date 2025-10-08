@@ -61,7 +61,7 @@ void slide_test() {
         board_t board = string_to_board(init);
         const board_t expected_board = string_to_board(expected);
 
-        slide_up(board, col, count);
+        slide_down(board, col, count);
 
         return (board == expected_board) ? 1 : 0;
       };
@@ -83,7 +83,7 @@ void slide_test() {
       col_mv("RWWWWW BWWWWW YWWWWW OWWWWW CWWWWW GWWWWW",
              "RWWWWW BWWWWW YWWWWW OWWWWW CWWWWW GWWWWW", 0, 0),
       col_mv("WRWWWW WBWWWW WYWWWW WOWWWW WCWWWW WGWWWW",
-             "WBWWWW WYWWWW WOWWWW WCWWWW WGWWWW WRWWWW", 1, 1),
+             "WGWWWW WRWWWW WBWWWW WYWWWW WOWWWW WCWWWW", 1, 1),
     };
 
   MultiTest slide("Sliding", slide_fns);

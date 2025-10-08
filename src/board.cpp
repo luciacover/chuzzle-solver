@@ -100,7 +100,7 @@ void slide_left(board_t &board, const int &row, const int &count) {
               board.begin() + start_index + BOARD_LENGTH);
 }
 
-void slide_up(board_t &board, const int &col, const int &count) {
+void slide_down(board_t &board, const int &col, const int &count) {
   board_t board_cols = rotate_board(board, false);
   const int start_index = col * BOARD_LENGTH;
 
