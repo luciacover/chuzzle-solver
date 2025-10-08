@@ -54,14 +54,38 @@ void slide_test() {
     };
   };
 
-  const testfn_t row0 = row_mv("RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW", "OCGRBY WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW", 0, 3);
-  const testfn_t row1 = row_mv("WWWWWW RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW", "WWWWWW CGRBYO WWWWWW WWWWWW WWWWWW WWWWWW", 1, 4);
-  const testfn_t row2 = row_mv("WWWWWW WWWWWW RBYOCG WWWWWW WWWWWW WWWWWW", "WWWWWW WWWWWW GRBYOC WWWWWW WWWWWW WWWWWW", 2, 5);
-  const testfn_t row3 = row_mv("WWWWWW WWWWWW WWWWWW RBYOCG WWWWWW WWWWWW", "WWWWWW WWWWWW WWWWWW BYOCGR WWWWWW WWWWWW", 3, 1);
-  const testfn_t row4 = row_mv("WWWWWW WWWWWW WWWWWW WWWWWW RBYOCG WWWWWW", "WWWWWW WWWWWW WWWWWW WWWWWW YOCGRB WWWWWW", 4, 2);
-  const testfn_t row5 = row_mv("WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW RBYOCG", "WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW OCGRBY", 5, 3);
-  
-  std::vector<testfn_t> slide_fns = { row0, row1, row2, row3, row4, row5 }; 
+  // this and the function above could (and probably should) be combined into a single one at some point.
+  const auto col_mv = [](const std::string &init, const std::string &expected,
+                         const int &col, const int &count) -> testfn_t {
+      return [=]() {
+        board_t board = string_to_board(init);
+        const board_t expected_board = string_to_board(expected);
+
+        slide_up(board, col, count);
+
+        return (board == expected_board) ? 1 : 0;
+      };
+    };
+
+  std::vector<testfn_t> slide_fns = {
+      row_mv("RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW",
+             "RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW", 0, 0),
+      row_mv("WWWWWW RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW",
+             "WWWWWW BYOCGR WWWWWW WWWWWW WWWWWW WWWWWW", 1, 1),
+      row_mv("WWWWWW WWWWWW RBYOCG WWWWWW WWWWWW WWWWWW",
+             "WWWWWW WWWWWW YOCGRB WWWWWW WWWWWW WWWWWW", 2, 2),
+      row_mv("WWWWWW WWWWWW WWWWWW RBYOCG WWWWWW WWWWWW",
+             "WWWWWW WWWWWW WWWWWW OCGRBY WWWWWW WWWWWW", 3, 3),
+      row_mv("WWWWWW WWWWWW WWWWWW WWWWWW RBYOCG WWWWWW",
+             "WWWWWW WWWWWW WWWWWW WWWWWW CGRBYO WWWWWW", 4, 4),
+      row_mv("WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW RBYOCG",
+             "WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW GRBYOC", 5, 5),
+      col_mv("RWWWWW BWWWWW YWWWWW OWWWWW CWWWWW GWWWWW",
+             "RWWWWW BWWWWW YWWWWW OWWWWW CWWWWW GWWWWW", 0, 0),
+      col_mv("WRWWWW WBWWWW WYWWWW WOWWWW WCWWWW WGWWWW",
+             "WBWWWW WYWWWW WOWWWW WCWWWW WGWWWW WRWWWW", 1, 1),
+    };
+
   MultiTest slide("Sliding", slide_fns);
   slide.run();
   printf("%s\n", slide.results().c_str());

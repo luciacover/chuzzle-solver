@@ -85,7 +85,7 @@ board_t rotate_board(const board_t &board, const bool &left_rotate) {
   
   for (int i = 0; i < BOARD_LENGTH; i++) {
     for (int j = 0; j < BOARD_LENGTH; j++) {
-      dst[board_coord(i, j)] = board[board_coord(j, (left_rotate) ? BOARD_LENGTH - i - 1 : i)];
+      dst[board_coord(i, j)] = board[board_coord((left_rotate) ? j : BOARD_LENGTH - j - 1, (left_rotate) ? BOARD_LENGTH - i - 1 : i)];
     }
   }
 
