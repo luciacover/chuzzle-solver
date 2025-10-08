@@ -1,6 +1,7 @@
 #include "repl.hpp"
 #include "board.hpp"
 #include "zobrist.hpp"
+#include "test.hpp"
 
 #include <string>
 #include <iostream>
@@ -111,7 +112,12 @@ void repl() {
       printf("t                - recreates the hashing table.\n");
       printf("h                - hashes the board\n");
       printf(",h               - this help message :D!!!\n");
+      printf(",t               - runs tests\n");
       printf("q                - quits the program... but you wouldn't do that right? :>\n");
+      continue;
+    } else if (in == ",t"){
+      run_tests();
+      continue;
     }
 
     // handling commands that need regex patterns
@@ -151,6 +157,8 @@ void repl() {
       print_board(board);
       continue;
     }
+
+    printf("unknown input: %s!! :(\n", in.c_str());
   }
 
   restore_term(original);

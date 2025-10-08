@@ -38,7 +38,6 @@ class MultiTest : public Test {
     void run();
 };
 
-void zobrist_test();
-void slide_test();
+void run_tests();
 
 #endif

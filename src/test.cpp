@@ -3,6 +3,8 @@
 #include "zobrist.hpp"
 #include <cstdio>
 #include <string>
+#include <memory>
+#include <array>
 #include <unordered_set>
 #include <vector>
 #include <format>
@@ -36,7 +38,7 @@ void MultiTest::run() {
   }
 }
 
-void zobrist_test() {
+auto zobrist_test() {
   const testfn_t generate_hash = []() {
     table_t table = init_table();
     std::unordered_set<hashsize_t> hashes;
@@ -67,11 +69,10 @@ void zobrist_test() {
   };
 
   RepeatTest zobrist("Zobrist Hashing", 100, generate_hash);
-  zobrist.run();
-  printf("%s\n", zobrist.results().c_str());
+  return std::make_unique<RepeatTest>(zobrist);
 }
 
-void slide_test() {
+auto slide_test() {
   const auto row_mv = [](const std::string &init, const std::string &expected,
                          const int &row, const int &count) -> testfn_t {
     return [=]() {
@@ -126,6 +127,14 @@ void slide_test() {
   };
 
   MultiTest slide("Sliding", slide_fns);
-  slide.run();
-  printf("%s\n", slide.results().c_str());
+  return std::make_unique<MultiTest>(slide);
+}
+
+void run_tests() {
+  const std::array<std::unique_ptr<Test>, 2> tests = { zobrist_test(), slide_test() };
+
+  for (auto &test : tests) {
+    test->run();
+    printf("%s\n", test->results().c_str());
+  }
 }
