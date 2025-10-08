@@ -1,9 +1,9 @@
 #ifndef BOARD_HPP_
 #define BOARD_HPP_
 
-#include <string>
-#include "util.hpp"
 #include "chuzzle.hpp"
+#include "util.hpp"
+#include <string>
 
 typedef std::array<Chuzzle, BOARD_SIZE> board_t;
 

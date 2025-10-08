@@ -1,13 +1,13 @@
 #include "test.hpp"
 #include "board.hpp"
 #include "zobrist.hpp"
-#include <cstdio>
-#include <string>
-#include <memory>
 #include <array>
+#include <cstdio>
+#include <format>
+#include <memory>
+#include <string>
 #include <unordered_set>
 #include <vector>
-#include <format>
 
 Test::Test(const std::string &n, const int &c) : test_name(n), test_count(c) {}
 
@@ -131,7 +131,8 @@ auto slide_test() {
 }
 
 void run_tests() {
-  const std::array<std::unique_ptr<Test>, 2> tests = { zobrist_test(), slide_test() };
+  const std::array<std::unique_ptr<Test>, 2> tests = {zobrist_test(),
+                                                      slide_test()};
 
   for (auto &test : tests) {
     test->run();

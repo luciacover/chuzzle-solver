@@ -1,15 +1,15 @@
 #include "repl.hpp"
 #include "board.hpp"
-#include "zobrist.hpp"
 #include "test.hpp"
+#include "zobrist.hpp"
 
-#include <string>
-#include <iostream>
-#include <termios.h>
-#include <unistd.h>
 #include <cctype>
 #include <cstdio>
+#include <iostream>
 #include <regex>
+#include <string>
+#include <termios.h>
+#include <unistd.h>
 
 void set_raw(termios &original) {
   termios raw = original;
@@ -34,7 +34,8 @@ std::string read_input() {
     if (c == '\n' || c == '\r') {
       std::cout << std::endl;
       break;
-    } else if (c == 127 || c == 8) { // backspace i think im too tired to make this comment bro
+    } else if (c == 127 || c == 8) { // backspace i think im too tired to make
+                                     // this comment bro
       if (!input.empty()) {
         input.pop_back();
         std::cout << "\b \b";
@@ -54,7 +55,7 @@ void repl() {
   termios original;
   tcgetattr(STDIN_FILENO, &original);
   set_raw(original);
-  
+
   printf("CHUZZLE SOLVER REPL\n");
   printf("type ,h for help.\n");
 
@@ -72,7 +73,8 @@ void repl() {
       break;
     } else if (in == "h") {
       if (!board_initialized) {
-        printf("[ERROR]: board uninitialized. create board before generating hash.\n");
+        printf("[ERROR]: board uninitialized. create board before generating "
+               "hash.\n");
         continue;
       }
 
@@ -104,18 +106,22 @@ void repl() {
       print_board(board);
       continue;
     } else if (in == ",h") {
-      printf("b <board string> - creates a new board with a given board string.\n");
-      printf("r                - sets the board to be a randomly generated one.\n");
+      printf("b <board string> - creates a new board with a given board "
+             "string.\n");
+      printf("r                - sets the board to be a randomly generated "
+             "one.\n");
       printf("p                - prints the board\n");
-      printf("l<row><count>    - moves the row to the left by count. row and count are between 0 - 5 inclusive.\n");
+      printf("l<row><count>    - moves the row to the left by count. row and "
+             "count are between 0 - 5 inclusive.\n");
       printf("d<col><count>    - similar to moving left, but down instead.\n");
       printf("t                - recreates the hashing table.\n");
       printf("h                - hashes the board\n");
       printf(",h               - this help message :D!!!\n");
       printf(",t               - runs tests\n");
-      printf("q                - quits the program... but you wouldn't do that right? :>\n");
+      printf("q                - quits the program... but you wouldn't do that "
+             "right? :>\n");
       continue;
-    } else if (in == ",t"){
+    } else if (in == ",t") {
       run_tests();
       continue;
     }

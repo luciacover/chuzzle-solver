@@ -1,7 +1,7 @@
 #include "board.hpp"
+#include <algorithm>
 #include <cstdio>
 #include <unordered_map>
-#include <algorithm>
 
 // converts a board to a string of chuzzles R/B/C/G/O/M/W/Y
 std::string board_to_string(const board_t &board) {
@@ -21,21 +21,22 @@ board_t string_to_board(const std::string &bs) {
 
   for (char c : bs) {
     switch (c) {
-      case 'R':
-      case 'B':
-      case 'C':
-      case 'G':
-      case 'O':
-      case 'M':
-      case 'W':
-      case 'Y':
-        board[pos++] = static_cast<Chuzzle>(c);
-        break;
-      default:
-        break;
+    case 'R':
+    case 'B':
+    case 'C':
+    case 'G':
+    case 'O':
+    case 'M':
+    case 'W':
+    case 'Y':
+      board[pos++] = static_cast<Chuzzle>(c);
+      break;
+    default:
+      break;
     }
 
-    if (pos >= BOARD_SIZE) break;
+    if (pos >= BOARD_SIZE)
+      break;
   }
 
   return board;
@@ -44,9 +45,9 @@ board_t string_to_board(const std::string &bs) {
 board_t random_board() {
   board_t board;
 
-  constexpr std::array<Chuzzle, PIECES> chuzzles = { Chuzzle::RED, Chuzzle::BLUE, Chuzzle::CYAN,
-                                            Chuzzle::GREEN, Chuzzle::WHITE, Chuzzle::YELLOW,
-                                            Chuzzle::RAINBOW, Chuzzle::ORANGE };
+  constexpr std::array<Chuzzle, PIECES> chuzzles = {
+      Chuzzle::RED,   Chuzzle::BLUE,   Chuzzle::CYAN,    Chuzzle::GREEN,
+      Chuzzle::WHITE, Chuzzle::YELLOW, Chuzzle::RAINBOW, Chuzzle::ORANGE};
   for (auto &c : board) {
     c = static_cast<Chuzzle>(chuzzles[rand() % PIECES]);
   }
@@ -55,14 +56,11 @@ board_t random_board() {
 }
 
 void print_board(const board_t &board) {
-  const std::unordered_map<Chuzzle, std::string> colors = { {Chuzzle::RED, "\e[31m"},
-                                                            {Chuzzle::BLUE, "\e[34m"},
-                                                            {Chuzzle::CYAN, "\e[36m"},
-                                                            {Chuzzle::GREEN, "\e[32m"},
-                                                            {Chuzzle::WHITE, "\e[37m"},
-                                                            {Chuzzle::YELLOW, "\e[33m"},
-                                                            {Chuzzle::RAINBOW, "\e[1;35m"},
-                                                            {Chuzzle::ORANGE, "\e[91m"} };
+  const std::unordered_map<Chuzzle, std::string> colors = {
+      {Chuzzle::RED, "\e[31m"},       {Chuzzle::BLUE, "\e[34m"},
+      {Chuzzle::CYAN, "\e[36m"},      {Chuzzle::GREEN, "\e[32m"},
+      {Chuzzle::WHITE, "\e[37m"},     {Chuzzle::YELLOW, "\e[33m"},
+      {Chuzzle::RAINBOW, "\e[1;35m"}, {Chuzzle::ORANGE, "\e[91m"}};
 
   for (int i = 0; i < BOARD_LENGTH; i++) {
     for (int j = 0; j < BOARD_LENGTH; j++) {
@@ -78,14 +76,16 @@ constexpr int board_coord(const int &row, const int &col) {
   return row * BOARD_LENGTH + col;
 }
 
-// this definitely isnt optimal, i reckon i could probably do this inplace with std::swap,
-// but bah humbug
+// this definitely isnt optimal, i reckon i could probably do this inplace with
+// std::swap, but bah humbug
 board_t rotate_board(const board_t &board, const bool &left_rotate) {
   board_t dst;
-  
+
   for (int i = 0; i < BOARD_LENGTH; i++) {
     for (int j = 0; j < BOARD_LENGTH; j++) {
-      dst[board_coord(i, j)] = board[board_coord((left_rotate) ? j : BOARD_LENGTH - j - 1, (left_rotate) ? BOARD_LENGTH - i - 1 : i)];
+      dst[board_coord(i, j)] =
+          board[board_coord((left_rotate) ? j : BOARD_LENGTH - j - 1,
+                            (left_rotate) ? BOARD_LENGTH - i - 1 : i)];
     }
   }
 
@@ -93,10 +93,9 @@ board_t rotate_board(const board_t &board, const bool &left_rotate) {
 }
 
 // !! DOESN'T DO BOUNDS CHECKS! THOSE SHOULD BE HANDLED ELSEWHERE!
-void slide_left(board_t &board, const int &row, const int &count) { 
+void slide_left(board_t &board, const int &row, const int &count) {
   const int start_index = row * BOARD_LENGTH;
-  std::rotate(board.begin() + start_index,
-              board.begin() + start_index + count,
+  std::rotate(board.begin() + start_index, board.begin() + start_index + count,
               board.begin() + start_index + BOARD_LENGTH);
 }
 
