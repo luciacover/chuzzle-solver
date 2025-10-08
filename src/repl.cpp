@@ -21,7 +21,7 @@ void restore_term(const termios &original) {
 }
 
 bool allowed(char c) {
-  return std::isalnum(c) || c == ' ' || c == '+';
+  return std::isalnum(c) || c == ' ' || c == '+' || c == ',';
 }
 
 std::string read_input() {
@@ -55,7 +55,7 @@ void repl() {
   set_raw(original);
   
   printf("CHUZZLE SOLVER REPL\n");
-  printf("press <HELP UNIMPLENTED> for help.\n");
+  printf("type ,h for help.\n");
 
   bool board_initialized = false;
   table_t table = init_table();
@@ -66,6 +66,7 @@ void repl() {
     std::string in = read_input();
     // checking single-character commands
     if (in == "q") {
+      printf("goodbye, friend :(");
       break;
     } else if (in == "h") {
       if (!board_initialized) {
@@ -100,6 +101,16 @@ void repl() {
 
       print_board(board);
       continue;
+    } else if (in == ",h") {
+      printf("b <board string> - creates a new board with a given board string.\n");
+      printf("r                - sets the board to be a randomly generated one.\n");
+      printf("p                - prints the board\n");
+      printf("l<row>+<count>   - moves the row to the left by count. row and count are between 0 - 5 inclusive.\n");
+      printf("d<col>+<count>   - similar to moving left, but down instead.\n");
+      printf("t                - recreates the hashing table.\n");
+      printf("h                - hashes the board\n");
+      printf(",h               - this help message :D!!!\n");
+      printf("q                - quits the program... but you wouldn't do that right? :>\n");
     }
 
     std::regex board_pattern(R"(b ([RBCGOMWY]{36}))");
