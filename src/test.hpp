@@ -3,6 +3,7 @@
 
 #include <string>
 #include <format>
+#include <vector>
 #include <functional>
 
 typedef std::function<int()> testfn_t;
@@ -39,6 +40,20 @@ class RepeatTest : public Test {
     }
 };
 
+class MultiTest : public Test {
+  private:
+    const std::vector<testfn_t> test_evals;
+  public:
+    MultiTest(const std::string &n, const std::vector<testfn_t> &e) : Test(n, e.size()), test_evals(e) {};
+
+    void run() override {
+      for (const auto &test_eval : this->test_evals) {
+        this->successful += test_eval();
+      }
+    }
+};
+
 void zobrist_test();
+void slide_test();
 
 #endif
