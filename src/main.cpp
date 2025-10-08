@@ -1,8 +1,6 @@
-#include "test.hpp"
+#include "repl.hpp"
 
 int main(void) {
-  zobrist_test();
-  slide_test();
- 
+  repl();
   return 0;
 }
