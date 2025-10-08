@@ -1,10 +1,40 @@
 #include "test.hpp"
 #include "board.hpp"
 #include "zobrist.hpp"
-#include <unordered_set>
 #include <cstdio>
 #include <string>
+#include <unordered_set>
 #include <vector>
+#include <format>
+
+Test::Test(const std::string &n, const int &c) : test_name(n), test_count(c) {}
+
+std::string Test::results() {
+  const double correct_ratio = this->successful / (double)this->test_count;
+  return std::format("[{}{}\e[0m]: {} of {} test(s) passed.",
+                     (correct_ratio >= PASSED_LIMIT) ? "\e[1;92m"
+                     : (correct_ratio >= OKAY_LIMIT) ? "\e[1;93m"
+                                                     : "\e[1;91m",
+                     this->test_name, this->successful, this->test_count);
+}
+
+RepeatTest::RepeatTest(const std::string &n, const int &c, const testfn_t &e)
+    : Test(n, c), test_eval(e) {}
+
+void RepeatTest::run() {
+  for (int i = 0; i < this->test_count; i++) {
+    this->successful += this->test_eval();
+  }
+}
+
+MultiTest::MultiTest(const std::string &n, const std::vector<testfn_t> &e)
+    : Test(n, e.size()), test_evals(e) {}
+
+void MultiTest::run() {
+  for (const auto &test_eval : this->test_evals) {
+    this->successful += test_eval();
+  }
+}
 
 void zobrist_test() {
   const testfn_t generate_hash = []() {
@@ -35,7 +65,7 @@ void zobrist_test() {
 
     return 1;
   };
-  
+
   RepeatTest zobrist("Zobrist Hashing", 100, generate_hash);
   zobrist.run();
   printf("%s\n", zobrist.results().c_str());
@@ -54,18 +84,19 @@ void slide_test() {
     };
   };
 
-  // this and the function above could (and probably should) be combined into a single one at some point.
+  // this and the function above could (and probably should) be combined into a
+  // single one at some point.
   const auto col_mv = [](const std::string &init, const std::string &expected,
                          const int &col, const int &count) -> testfn_t {
-      return [=]() {
-        board_t board = string_to_board(init);
-        const board_t expected_board = string_to_board(expected);
+    return [=]() {
+      board_t board = string_to_board(init);
+      const board_t expected_board = string_to_board(expected);
 
-        slide_down(board, col, count);
+      slide_down(board, col, count);
 
-        return (board == expected_board) ? 1 : 0;
-      };
+      return (board == expected_board) ? 1 : 0;
     };
+  };
 
   std::vector<testfn_t> slide_fns = {
       row_mv("RBYOCG WWWWWW WWWWWW WWWWWW WWWWWW WWWWWW",
@@ -92,7 +123,7 @@ void slide_test() {
              "WWWWYW WWWWOW WWWWCW WWWWGW WWWWRW WWWWBW", 4, 4),
       col_mv("WWWWWR WWWWWB WWWWWY WWWWWO WWWWWC WWWWWG",
              "WWWWWB WWWWWY WWWWWO WWWWWC WWWWWG WWWWWR", 5, 5),
-    };
+  };
 
   MultiTest slide("Sliding", slide_fns);
   slide.run();
