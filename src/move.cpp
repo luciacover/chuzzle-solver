@@ -1,23 +1,40 @@
 #include "move.hpp"
+#include "zobrist.hpp"
+#include <array>
+#include <tuple>
+
+constinit const std::size_t MODS_SIZE = 60;
+
+// generates an array of tuples that represent all possible modifications that can be made to a given board.
+[[nodiscard]]
+consteval std::array<std::tuple<char, u8, u8>, MODS_SIZE> generate_mods() {
+  std::array<std::tuple<char, u8, u8>, MODS_SIZE> out;
+
+  for (std::size_t i{0}, pos{0}; pos <= 5; pos++) {
+    for (std::size_t count{1}; count <= 5 && i < MODS_SIZE - 1; count++) {
+      out.at(i++) = std::tuple('l', pos, count);
+      out.at(i++) = std::tuple('d', pos, count);
+    }
+  }
+  
+  return out;
+}
+
+constinit const auto mods = generate_mods();
 
 Move::Move(const table_t &table, const board_t &initial,
-           const hashsize_t &board_hash,
-           const std::optional<std::tuple<char, u8, u8>> &mod,
+           const std::optional<std::tuple<char, u8, u8>> &modification,
            std::shared_ptr<std::unordered_set<hashsize_t>> previously_generated,
-           const board_t &goal)
-    : move_hash(board_hash), modification(mod) {
-  previously_generated->insert(this->move_hash);
+           const board_t &goal, const int depth)
+    : mod(modification) {
 
-  if (this->modification)
-    return;
+  for (const auto &m : mods) {
+    const auto [ dir, pos, count ] = m;
+  
+    // fucked up evil solution
+    if (const auto [ b_dir, b_pos, _ ] = this->mod.value_or(std::tuple(' ', 255, 255)); b_dir == dir && b_pos == pos)
+       continue;     
 
-  // simple test to make sure the shared ptr stuff works right
-  for (int i = 0; i < 10; i++) {
-    const board_t b = random_board();
-    const hashsize_t h = hash(b, table);
-    const auto t = std::make_tuple('c', 3, 4);
-    const Move nm(table, initial, h, t, previously_generated, goal);
-    const auto np = std::make_shared<Move>(nm);
-    this->next_moves.push_back(np);
-  }
+    printf("%c %d %d\n", dir, pos, count);
+  }      
 }
