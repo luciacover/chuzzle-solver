@@ -30,7 +30,8 @@ Move::Move(const table_t &table, const board_t &initial,
            const board_t &goal, const int depth)
     : mod(modification) {
 
-  if (depth <= 0) return;
+  if (depth <= 0)
+    return;
   for (const auto &m : mods) {
     const auto [dir, pos, count] = m;
 
@@ -47,7 +48,8 @@ Move::Move(const table_t &table, const board_t &initial,
       continue;
 
     previously_generated->insert(next_hash);
-    const auto next = std::make_shared<Move>(table, next_board, m, previously_generated, goal, depth - 1);
+    const auto next = std::make_shared<Move>(
+        table, next_board, m, previously_generated, goal, depth - 1);
     this->next_moves.push_back(next);
   }
 }

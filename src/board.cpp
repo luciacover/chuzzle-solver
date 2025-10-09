@@ -17,27 +17,9 @@ std::string board_to_string(const board_t &board) {
 // converts a string of chuzzles R/B/C/G/O/M/W/Y to a board
 board_t string_to_board(const std::string &bs) {
   board_t board;
-  int pos = 0;
-
-  for (char c : bs) {
-    switch (c) {
-    case 'R':
-    case 'B':
-    case 'C':
-    case 'G':
-    case 'O':
-    case 'M':
-    case 'W':
-    case 'Y':
-      board[pos++] = static_cast<Chuzzle>(c);
-      break;
-    default:
-      break;
-    }
-
-    if (pos >= BOARD_SIZE)
-      break;
-  }
+  std::ranges::transform(
+      bs.begin(), bs.end(), board.begin(),
+      [](const char &c) -> Chuzzle { return static_cast<Chuzzle>(c); });
 
   return board;
 }
@@ -48,11 +30,16 @@ board_t random_board() {
   constexpr std::array<Chuzzle, PIECES> chuzzles = {
       Chuzzle::RED,   Chuzzle::BLUE,   Chuzzle::CYAN,    Chuzzle::GREEN,
       Chuzzle::WHITE, Chuzzle::YELLOW, Chuzzle::RAINBOW, Chuzzle::ORANGE};
-  for (auto &c : board) {
-    c = static_cast<Chuzzle>(chuzzles[rand() % PIECES]);
-  }
+  std::ranges::generate_n(board.begin(), BOARD_SIZE, [chuzzles]() {
+    return chuzzles.at(rand() % PIECES);
+  });
 
   return board;
+}
+
+// calculates the 1d coordinate for the board given a 2d coord
+constexpr int board_coord(const int &row, const int &col) {
+  return row * BOARD_LENGTH + col;
 }
 
 void print_board(const board_t &board) {
@@ -64,16 +51,11 @@ void print_board(const board_t &board) {
 
   for (int i = 0; i < BOARD_LENGTH; i++) {
     for (int j = 0; j < BOARD_LENGTH; j++) {
-      printf("%sO\e[0m ", colors.at(board[i * BOARD_LENGTH + j]).c_str());
+      printf("%sO\e[0m ", colors.at(board[board_coord(i, j)]).c_str());
     }
 
     printf("\n");
   }
-}
-
-// calculates the 1d coordinate for the board given a 2d coord
-constexpr int board_coord(const int &row, const int &col) {
-  return row * BOARD_LENGTH + col;
 }
 
 // this definitely isnt optimal, i reckon i could probably do this inplace with
@@ -113,8 +95,9 @@ void slide_down(board_t &board, const int &col, const int &count) {
 board_t modify_board(const board_t &board, const mod_t &mod) {
   board_t b = board;
 
-  const auto [ dir, pos, count] = mod;
-  if (pos > 5 || count > 5) return board;
+  const auto [dir, pos, count] = mod;
+  if (pos > 5 || count > 5)
+    return board;
 
   if (dir == 'l') {
     slide_left(b, pos, count);
