@@ -63,7 +63,7 @@ void repl() {
   table_t table = init_table();
   board_t board;
   while (1) {
-    printf("> ");
+    printf("chuzrepl> ");
 
     std::string in = read_input();
 
