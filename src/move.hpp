@@ -4,7 +4,6 @@
 #include "board.hpp"
 #include <memory>
 #include <optional>
-#include <tuple>
 #include <unordered_set>
 #include <vector>
 
@@ -12,10 +11,10 @@ typedef std::unordered_set<hashsize_t> prevhashes_t;
 
 class Move {
 public:
-  const std::optional<std::tuple<char, u8, u8>> mod;
+  const std::optional<mod_t> mod;
   std::vector<std::shared_ptr<Move>> next_moves;
   Move(const table_t &table, const board_t &initial,
-       const std::optional<std::tuple<char, u8, u8>> &modification,
+       const std::optional<mod_t> &modification,
        std::shared_ptr<std::unordered_set<hashsize_t>> previously_generated,
        const board_t &goal, const int depth);
   ~Move() {}

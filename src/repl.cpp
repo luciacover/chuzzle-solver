@@ -128,8 +128,7 @@ void repl() {
 
     // handling commands that need regex patterns
     std::regex board_pattern(R"(b ([RBCGOMWY]{36}))");
-    std::regex left_pattern(R"(l([012345])([012345]))");
-    std::regex down_pattern(R"(d([012345])([012345]))");
+    std::regex move_pattern(R"(([dl])([012345])([012345]))");
     std::smatch matches;
     if (std::regex_match(in, matches, board_pattern)) {
       std::string b = matches[1];
@@ -138,28 +137,17 @@ void repl() {
       board = string_to_board(b);
       print_board(board);
       continue;
-    } else if (std::regex_match(in, matches, left_pattern)) {
+    } else if (std::regex_match(in, matches, move_pattern)) {
       if (!board_initialized) {
         printf("[ERROR]: board uninitialized. create board to shift.\n");
         continue;
       }
 
-      int row = stoi(matches[1]);
-      int count = stoi(matches[2]);
+      const char dir = matches[1].str().at(0);
+      const int pos = stoi(matches[2]);
+      const int count = stoi(matches[3]);
 
-      slide_left(board, row, count);
-      print_board(board);
-      continue;
-    } else if (std::regex_match(in, matches, down_pattern)) {
-      if (!board_initialized) {
-        printf("[ERROR]: board uninitialized. create board to shift.\n");
-        continue;
-      }
-
-      int col = stoi(matches[1]);
-      int count = stoi(matches[2]);
-
-      slide_down(board, col, count);
+      board = modify_board(board, std::tuple(dir, pos, count));
       print_board(board);
       continue;
     }

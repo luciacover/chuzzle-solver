@@ -109,3 +109,18 @@ void slide_down(board_t &board, const int &col, const int &count) {
 
   board = std::move(rotate_board(board_cols, true));
 }
+
+board_t modify_board(const board_t &board, const mod_t &mod) {
+  board_t b = board;
+
+  const auto [ dir, pos, count] = mod;
+  if (pos > 5 || count > 5) return board;
+
+  if (dir == 'l') {
+    slide_left(b, pos, count);
+  } else if (dir == 'd') {
+    slide_down(b, pos, count);
+  }
+
+  return b;
+}
