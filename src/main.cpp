@@ -9,20 +9,12 @@
 int main(int argc, char **argv) {
   //repl();
 
-  int c = 1000;
-  if (argc > 1) c = std::stoi(argv[1]);
-  auto t = init_table();
-  srand(std::time({}));
-  for (int i = 0; i < c; i++) {
-    auto b = random_board();
-    auto h = hash(b, t);
-  }
-  
-  /* int i = 5;
+  int i = 5;
   if (argc > 1) i = std::stoi(argv[1]);
-  board_t b = random_board();
+  board_t b = string_to_board("RBRBRBGYGYGYOCOCOCRRBBBBOOOYGGBBBBBB");
+  board_t g = string_to_board("OBRBRBBYGYGYRCOCOCGRBBBBOOOYGGRBBBBB");
+  
   table_t t = init_table();
-  BaseMove base{b, t, random_board(), i};
-  printf("%lu\n", base.previous_hashes->size()); */  
+  BaseMove base{b, t, g, i};
   return 0;
 }

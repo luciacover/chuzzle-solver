@@ -25,31 +25,39 @@ consteval std::array<mod_t, MODS_SIZE> generate_mods() {
 constinit const auto mods = generate_mods();
 
 Move::Move(const table_t &table, const board_t &initial,
-           const std::optional<mod_t> &modification,
            std::shared_ptr<prevhashes_t> previously_generated,
-           const board_t &goal, const int depth)
-    : mod(modification) {
+           const hashsize_t &goal, const int depth, std::queue<mod_t> prev_mods) {
 
   if (depth <= 0)
     return;
+
+  std::queue<mod_t> path;
   for (const auto &m : mods) {
-    const auto [dir, pos, count] = m;
-
-    // fucked up evil solution
-    if (const auto [b_dir, b_pos, _] =
-            this->mod.value_or(std::tuple(' ', 255, 255));
-        b_dir == dir && b_pos == pos)
-      continue;
-
+    auto p = prev_mods;
     const board_t next_board = modify_board(initial, m);
     const hashsize_t next_hash = hash(next_board, table);
 
     if (previously_generated->contains(next_hash))
       continue;
 
+    p.push(m);
+    
+    if (next_hash == goal) {
+      path = p;
+      break;
+    }
+    
     previously_generated->insert(next_hash);
     const auto next = std::make_shared<Move>(
-        table, next_board, m, previously_generated, goal, depth - 1);
+        table, next_board, previously_generated, goal, depth - 1, p);
     this->next_moves.push_back(next);
   }
+
+  if (path.empty()) return;
+
+  for (; !path.empty(); path.pop()) {
+    auto [n, l, r] = path.front();
+    printf("%c %d %d\n", n, l, r);
+  }
+  printf("-----\n");
 }
