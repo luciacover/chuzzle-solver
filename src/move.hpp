@@ -6,26 +6,25 @@
 #include <queue>
 #include <memory>
 #include <unordered_set>
-#include <vector>
 
 typedef std::unordered_set<hashsize_t> prevhashes_t;
 
 class Move {
 public:
-  std::vector<std::shared_ptr<Move>> next_moves;
-  Move(const table_t &table, const board_t &initial,
+  Move(const table_t &table, const board_t &board,
        std::shared_ptr<std::unordered_set<hashsize_t>> previously_generated,
-       const hashsize_t &goal, const int depth, std::queue<mod_t> prev_mods);
+       const hashsize_t &goal, const int depth, std::queue<mod_t> prev_mods, bool &complete);
   ~Move() {}
 };
 
 class BaseMove : public Move {
 private:
   const table_t table;
+  bool complete = false;
   BaseMove(const board_t &board, const table_t &table, const hashsize_t &goal,
            const int depth, std::shared_ptr<prevhashes_t> h)
       : board(board), table(table), goal(goal), previous_hashes(h),
-        Move(table, board, h, goal, depth, {}) {}
+        Move(table, board, h, goal, depth, {}, this->complete) {}
 
 public:
   std::shared_ptr<std::unordered_set<hashsize_t>> previous_hashes;
